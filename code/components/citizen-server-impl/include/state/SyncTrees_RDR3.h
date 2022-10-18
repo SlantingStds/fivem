@@ -56,20 +56,25 @@ struct CVehicleCreationDataNode : GenericSerializeDataNode<CVehicleCreationDataN
 		s.SerializeSigned(5, unk2);
 
 		bool unkBool3 = false;
-		s.Serialize(unkBool3);
+		s.Serialize(unkBool3);
+
 		bool wheelsBreakable = true; // very guessed name, no idea
-		s.Serialize(wheelsBreakable);
+		s.Serialize(wheelsBreakable);
+
 		uint32_t unkHash7 = 0;
 
 		bool unkBool5 = unkHash7 != 0;
-		s.Serialize(unkBool5);
+		s.Serialize(unkBool5);
+
 		if (unkBool5)
 		{
 			bool unkBool6 = unkHash7 != 0;
-			s.Serialize(unkBool6);
+			s.Serialize(unkBool6);
+
 			if (unkBool6)
 			{
-				s.Serialize(32, unkHash7);			}
+				s.Serialize(32, unkHash7);
+			}
 		}
 
 		return true; 
@@ -85,7 +90,8 @@ struct CAutomobileCreationDataNode : GenericSerializeDataNode<CAutomobileCreatio
 
 	template<typename Serializer>
 	bool Serialize(Serializer& s)
-	{		s.Serialize(allDoorsClosed);
+	{
+		s.Serialize(allDoorsClosed);
 
 		if (!allDoorsClosed)
 		{
@@ -183,7 +189,8 @@ struct CEntityScriptInfoDataNode : GenericSerializeDataNode<CEntityScriptInfoDat
 	bool Serialize(Serializer& s)
 	{
 		bool hasScript = m_scriptHash != 0;
-		s.Serialize(hasScript);
+		s.Serialize(hasScript);
+
 		if (hasScript) // Has script info
 		{
 			// deserialize CGameScriptObjInfo
@@ -191,29 +198,38 @@ struct CEntityScriptInfoDataNode : GenericSerializeDataNode<CEntityScriptInfoDat
 			// -> CGameScriptId
 
 			// ---> rage::scriptId
-			s.Serialize(32, m_scriptHash);			// ---> end
+			s.Serialize(32, m_scriptHash);
+			// ---> end
 
 			// 68 unknown bits 00000000000000001100011111110000010100000000000000000000101000000000
 			uint32_t notAFix = 0b00000000000000001100011111110000, notAFix2 = 0b01010000000000000000000010100000, notAFix3 = 0b0000;
-			s.Serialize(32, notAFix);			s.Serialize(32, notAFix2);			s.Serialize(4, notAFix3);
+			s.Serialize(32, notAFix);
+			s.Serialize(32, notAFix2);
+			s.Serialize(4, notAFix3);
+
 			// -> end
 
-			s.Serialize(32, m_scriptObjectId);
+			s.Serialize(32, m_scriptObjectId);
+
 			bool isHostTokenLong = false;
-			s.Serialize(isHostTokenLong);
+			s.Serialize(isHostTokenLong);
+
 			uint16_t hostToken = 0;
-			s.Serialize(isHostTokenLong ? 16 : 3, hostToken);
+			s.Serialize(isHostTokenLong ? 16 : 3, hostToken);
+
 			// end
 
 			bool unkBool3 = false;
-			s.Serialize(unkBool3);
+			s.Serialize(unkBool3);
+
 			/*
 			if constexpr (Serializer::isReader)
 			{
 				if (!s.state->buffer.IsAtEnd())
 				{
 					std::string bitsStr = "";
-					while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());				}
+					while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());
+				}
 			}
 			*/
 		}
@@ -258,7 +274,10 @@ struct CSectorDataNode : GenericSerializeDataNode<CSectorDataNode>
 	template<typename Serializer>
 	bool Serialize(Serializer& s)
 	{
-		s.Serialize(10, m_sectorX);		s.Serialize(10, m_sectorY);		s.Serialize(6, m_sectorZ);
+		s.Serialize(10, m_sectorX);
+		s.Serialize(10, m_sectorY);
+		s.Serialize(6, m_sectorZ);
+
 		if constexpr (Serializer::isReader)
 		{
 			s.state->entity->syncTree->CalculatePosition();
@@ -270,7 +289,8 @@ struct CSectorDataNode : GenericSerializeDataNode<CSectorDataNode>
 			if (!s.state->buffer.IsAtEnd())
 			{
 				std::string bitsStr = "";
-				while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());			}
+				while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());
+			}
 		}
 		*/
 
@@ -312,9 +332,11 @@ struct CPedCreationDataNode : GenericSerializeDataNode<CPedCreationDataNode>
 	bool Serialize(TSerializer& s)
 	{
 		uint32_t popType = (uint32_t)m_popType;
-		s.Serialize(4, popType);		m_popType = (ePopType)popType;
+		s.Serialize(4, popType);
+		m_popType = (ePopType)popType;
 
-		s.Serialize(32, m_model);
+		s.Serialize(32, m_model);
+
 		/*
 		if (m_model == 138961043 || m_model == -1150462894 || m_model == 969427509 || m_model == -1904821831 || m_model == 1543787725
 			|| m_model == 352143044 || m_model == 809532746 || m_model == 264503396 || m_model == -1398443261 || m_model == -900222268
@@ -324,61 +346,78 @@ struct CPedCreationDataNode : GenericSerializeDataNode<CPedCreationDataNode>
 		}
 		*/
 
-		s.Serialize(16, randomSeed);
-		s.Serialize(isStanding);
+		s.Serialize(16, randomSeed);
+
+		s.Serialize(isStanding);
+
 		bool unkBool2 = false;
-		s.Serialize(unkBool2);
+		s.Serialize(unkBool2);
+
 		uint8_t unk3 = -1;
 
 		if (unkBool2)
 		{
-			s.Serialize(unk3);		}
+			s.Serialize(unk3);
+		}
 
-		s.Serialize(13, m_maxHealth);
+		s.Serialize(13, m_maxHealth);
+
 		uint32_t unk4 = 0;
 
 		bool unkBool3 = unk4 != 0;
-		s.Serialize(unkBool3);
+		s.Serialize(unkBool3);
+
 		if (unkBool3)
 		{
-			s.Serialize(32, unk4);		}
+			s.Serialize(32, unk4);
+		}
 
 		bool unkBool5 = true;
-		s.Serialize(unkBool5);
+		s.Serialize(unkBool5);
+
 		uint32_t unk7 = m_model;
 
 		bool unkBool6 = unk7 != 0;
-		s.Serialize(unkBool6);
+		s.Serialize(unkBool6);
+
 		if (unkBool6)
 		{
-			s.Serialize(32, unk7);		}
+			s.Serialize(32, unk7);
+		}
 
 		uint32_t unkHash10 = 0;
 
 		bool unkBool8 = unkHash10 != 0;
-		s.Serialize(unkBool8);
+		s.Serialize(unkBool8);
+
 		if (unkBool8)
 		{
 			bool unkBool9 = unkHash10 != 0;
-			s.Serialize(unkBool9);
+			s.Serialize(unkBool9);
+
 			if (unkBool9)
 			{
-				s.Serialize(32, unkHash10);			}
+				s.Serialize(32, unkHash10);
+			}
 		}
 
 		bool unkBool11 = false;
-		s.Serialize(unkBool11);
+		s.Serialize(unkBool11);
+
 		bool unkBool12 = false;
-		s.Serialize(unkBool12);
+		s.Serialize(unkBool12);
+
 		bool unkBool13 = false;
-		s.Serialize(unkBool13);
+		s.Serialize(unkBool13);
+
 		if (unkBool13)
 		{
 			// Serialise_E0
 		}
 
 		bool unkBool14 = false;
-		s.Serialize(unkBool14);
+		s.Serialize(unkBool14);
+
 		if (unkBool14)
 		{
 			// Serialise_E0
@@ -388,10 +427,12 @@ struct CPedCreationDataNode : GenericSerializeDataNode<CPedCreationDataNode>
 
 		if (unkBool13)
 		{
-			s.Serialize(5, unk15);		}
+			s.Serialize(5, unk15);
+		}
 		else if (unkBool14)
 		{
-			s.Serialize(5, unk15);		}
+			s.Serialize(5, unk15);
+		}
 
 		/*
 		if constexpr (TSerializer::isReader)
@@ -399,7 +440,8 @@ struct CPedCreationDataNode : GenericSerializeDataNode<CPedCreationDataNode>
 			if (!s.state->buffer.IsAtEnd())
 			{
 				std::string bitsStr = "";
-				while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());			}
+				while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());
+			}
 		}
 		*/
 
@@ -423,7 +465,9 @@ struct CEntityOrientationDataNode : GenericSerializeDataNode<CEntityOrientationD
 
 	template<typename Serializer>
 	bool Serialize(Serializer& s)
-	{		s.SerializeRotation(data.rotX, data.rotY, data.rotZ);		return true;
+	{
+		s.SerializeRotation(data.rotX, data.rotY, data.rotZ);
+		return true;
 	}
 };
 
@@ -526,48 +570,66 @@ struct CObjectCreationDataNode : GenericSerializeDataNode<CObjectCreationDataNod
 
 	template<typename Serializer>
 	bool Serialize(Serializer& s)
-	{		uint32_t unk2 = 0;
+	{
+		uint32_t unk2 = 0;
 
 		bool unkBool = unk2 != 0;
-		s.Serialize(unkBool);
+		s.Serialize(unkBool);
+
 		if (unkBool)
 		{
-			s.Serialize(32, unk2);		}
+			s.Serialize(32, unk2);
+		}
 
-		s.Serialize(5, m_createdBy);
+		s.Serialize(5, m_createdBy);
+
 		bool hasScript = m_scriptHash != 0;
-		s.Serialize(hasScript);
+		s.Serialize(hasScript);
+
 		if (hasScript)
 		{
-			s.Serialize(32, m_scriptHash);		}
+			s.Serialize(32, m_scriptHash);
+		}
 		else
 		{
 			m_scriptHash = 0;
 		}
 
 		bool unkBool6 = false;
-		s.Serialize(unkBool6);		bool unkBool7 = false;
-		s.Serialize(unkBool7);
+		s.Serialize(unkBool6);
+		bool unkBool7 = false;
+		s.Serialize(unkBool7);
+
 		if (m_createdBy != 3 && (m_createdBy > 0x12 || (409602 & (1 << m_createdBy)) == 0))
 		{
-			s.Serialize(32, m_model);			s.Serialize(m_hasInitPhysics);
+			s.Serialize(32, m_model);
+			s.Serialize(m_hasInitPhysics);
+
 			bool unkBool11 = false;
-			s.Serialize(unkBool11);			bool unkBool12 = false;
-			s.Serialize(unkBool12);			bool unkBool13 = false;
-			s.Serialize(unkBool13);			bool unkBool14 = false;
-			s.Serialize(unkBool14);			bool unkBool15 = false;
-			s.Serialize(unkBool15);
+			s.Serialize(unkBool11);
+			bool unkBool12 = false;
+			s.Serialize(unkBool12);
+			bool unkBool13 = false;
+			s.Serialize(unkBool13);
+			bool unkBool14 = false;
+			s.Serialize(unkBool14);
+			bool unkBool15 = false;
+			s.Serialize(unkBool15);
+
 			uint32_t unkHash19 = 0;
 
 			bool unkBool16 = unkHash19 != 0;
-			s.Serialize(unkBool16);
+			s.Serialize(unkBool16);
+
 			if (unkBool16)
 			{
 				bool unkBool17 = unkHash19 != 0;
-				s.Serialize(unkBool17);
+				s.Serialize(unkBool17);
+
 				if (unkBool17)
 				{
-					s.Serialize(32, unkHash19);				}
+					s.Serialize(32, unkHash19);
+				}
 			}
 
 			if (unkBool13)
@@ -619,37 +681,46 @@ struct CObjectCreationDataNode : GenericSerializeDataNode<CObjectCreationDataNod
 
 				float objectRotX = 0.0f, objectRotY = 0.0f, objectRotZ = 0.0f;
 				s.SerializeRotation(objectRotX, objectRotY, objectRotZ);
-			}
+
+			}
 		}
 
-		s.Serialize(m_hasLodDist);
+		s.Serialize(m_hasLodDist);
+
 		if (m_hasLodDist)
 		{
-			s.Serialize(16, m_lodDist);		}
+			s.Serialize(16, m_lodDist);
+		}
 
 		bool hasMaxHealth = m_maxHealth != 0;
-		s.Serialize(hasMaxHealth);
+		s.Serialize(hasMaxHealth);
+
 		if (hasMaxHealth)
 		{
-			s.Serialize(12, m_maxHealth);		}
+			s.Serialize(12, m_maxHealth);
+		}
 		else
 		{
 			m_maxHealth = 0;
 		}
 
 		bool unkBool32 = false;
-		s.Serialize(unkBool32);
+		s.Serialize(unkBool32);
+
 		uint32_t unkHash35 = 0;
 
 		bool unkBool33 = unkHash35 != 0;
-		s.Serialize(unkBool33);
+		s.Serialize(unkBool33);
+
 		if (unkBool33)
 		{
 			bool unkBool34 = unkHash35 != 0;
-			s.Serialize(unkBool34);
+			s.Serialize(unkBool34);
+
 			if (unkBool34)
 			{
-				s.Serialize(32, unkHash35);			}
+				s.Serialize(32, unkHash35);
+			}
 		}
 
 		return true;
@@ -670,10 +741,14 @@ struct CObjectSectorPosNode : GenericSerializeDataNode<CObjectSectorPosNode>
 	template<typename Serializer>
 	bool Serialize(Serializer& s)
 	{
-		s.Serialize(highRes);
+		s.Serialize(highRes);
+
 		int bits = highRes ? 20 : 12;
 
-		s.Serialize(bits, 54.0f, m_posX);		s.Serialize(bits, 54.0f, m_posY);		s.Serialize(bits, 69.0f, m_posZ);
+		s.Serialize(bits, 54.0f, m_posX);
+		s.Serialize(bits, 54.0f, m_posY);
+		s.Serialize(bits, 69.0f, m_posZ);
+
 		if constexpr (Serializer::isReader)
 		{
 			s.state->entity->syncTree->CalculatePosition();
@@ -795,7 +870,10 @@ struct CPedSectorPosMapNode : GenericSerializeDataNode<CPedSectorPosMapNode>
 	template<typename TSerializer>
 	bool Serialize(TSerializer& s)
 	{
-		s.Serialize(12, 54.0f, m_posX);		s.Serialize(12, 54.0f, m_posY);		s.Serialize(12, 69.0f, m_posZ);
+		s.Serialize(12, 54.0f, m_posX);
+		s.Serialize(12, 54.0f, m_posY);
+		s.Serialize(12, 69.0f, m_posZ);
+
 		if constexpr (TSerializer::isReader)
 		{
 			s.state->entity->syncTree->CalculatePosition();
@@ -810,7 +888,8 @@ struct CPedSectorPosMapNode : GenericSerializeDataNode<CPedSectorPosMapNode>
 			if (!s.state->buffer.IsAtEnd())
 			{
 				std::string bitsStr = "";
-				while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());			}
+				while (!s.state->buffer.IsAtEnd()) bitsStr += std::to_string(s.state->buffer.ReadBit());
+			}
 		}
 		*/
 
@@ -1078,7 +1157,10 @@ struct CObjectSectorDataNode : GenericSerializeDataNode<CObjectSectorDataNode>
 	template<typename Serializer>
 	bool Serialize(Serializer& s)
 	{
-		s.Serialize(10, m_sectorX);		s.Serialize(10, m_sectorY);		s.Serialize(6, m_sectorZ);
+		s.Serialize(10, m_sectorX);
+		s.Serialize(10, m_sectorY);
+		s.Serialize(6, m_sectorZ);
+
 		if constexpr (Serializer::isReader)
 		{
 			s.state->entity->syncTree->CalculatePosition();
@@ -1168,34 +1250,43 @@ struct CDraftVehCreationDataNode : GenericSerializeDataNode<CDraftVehCreationDat
 	template<typename Serializer>
 	bool Serialize(Serializer& s)
 	{
-		s.Serialize(4, attachedHorsesBitset);
+		s.Serialize(4, attachedHorsesBitset);
+
 		for (int i = 0; i < 4; i++)
 		{
 			if (((1 << i) & attachedHorsesBitset) != 0)
 			{
 				uint32_t horseUnkHash = 0;
-				s.Serialize(32, horseUnkHash);
+				s.Serialize(32, horseUnkHash);
+
 				uint8_t horseUnk2 = 0;
-				s.Serialize(2, horseUnk2);
+				s.Serialize(2, horseUnk2);
+
 				uint16_t horseUnk6 = 0xFFFF;
 				uint16_t horseUnk7 = 0xFFFF;
 				uint16_t horseUnk8 = 0xFFFF;
 
 				bool horseUnkBool3 = horseUnk6 != 0xFFFF;
-				s.Serialize(horseUnkBool3);				bool horseUnkBool4 = horseUnk7 != 0xFFFF;
-				s.Serialize(horseUnkBool4);				bool horseUnkBool5 = horseUnk8 != 0xFFFF;
-				s.Serialize(horseUnkBool5);
+				s.Serialize(horseUnkBool3);
+				bool horseUnkBool4 = horseUnk7 != 0xFFFF;
+				s.Serialize(horseUnkBool4);
+				bool horseUnkBool5 = horseUnk8 != 0xFFFF;
+				s.Serialize(horseUnkBool5);
+
 				if (horseUnkBool3)
 				{
-					s.Serialize(11, horseUnk6);				}
+					s.Serialize(11, horseUnk6);
+				}
 
 				if (horseUnkBool4)
 				{
-					s.Serialize(8, horseUnk7);				}
+					s.Serialize(8, horseUnk7);
+				}
 
 				if (horseUnkBool5)
 				{
-					s.Serialize(8, horseUnk8);				}
+					s.Serialize(8, horseUnk8);
+				}
 			}
 		}
 
@@ -1221,9 +1312,11 @@ struct CAnimalCreationDataNode : GenericSerializeDataNode<CAnimalCreationDataNod
 	bool Serialize(TSerializer& s)
 	{
 		uint32_t popType = (uint32_t)m_popType;
-		s.Serialize(4, popType);		m_popType = (ePopType)popType;
+		s.Serialize(4, popType);
+		m_popType = (ePopType)popType;
 
-		s.Serialize(32, m_model);
+		s.Serialize(32, m_model);
+
 		/*
 		if (m_model == 138961043 || m_model == -1150462894 || m_model == 969427509 || m_model == -1904821831 || m_model == 1543787725
 			|| m_model == 352143044 || m_model == 809532746 || m_model == 264503396 || m_model == -1398443261 || m_model == -900222268
@@ -1234,57 +1327,72 @@ struct CAnimalCreationDataNode : GenericSerializeDataNode<CAnimalCreationDataNod
 		*/
 
 		s.Serialize(16, randomSeed);
-		s.Serialize(isStanding);
+		s.Serialize(isStanding);
+
 		bool unkBool2 = false;
-		s.Serialize(unkBool2);
+		s.Serialize(unkBool2);
+
 		uint8_t unk3 = -1;
 
 		if (unkBool2)
 		{
-			s.Serialize(unk3);		}
+			s.Serialize(unk3);
+		}
 
-		s.Serialize(13, m_maxHealth);
+		s.Serialize(13, m_maxHealth);
+
 		uint32_t unk4 = 0;
 
 		bool unkBool3 = unk4 != 0;
-		s.Serialize(unkBool3);
+		s.Serialize(unkBool3);
+
 		if (unkBool3)
 		{
-			s.Serialize(32, unk4);		}
+			s.Serialize(32, unk4);
+		}
 
 		bool unkBool5 = true;
-		s.Serialize(unkBool5);
+		s.Serialize(unkBool5);
+
 		uint32_t unk7 = m_model;
 
 		bool unkBool6 = unk7 != 0;
-		s.Serialize(unkBool6);
+		s.Serialize(unkBool6);
+
 		if (unkBool6)
 		{
-			s.Serialize(32, unk7);		}
+			s.Serialize(32, unk7);
+		}
 
 		uint32_t unkHash10 = 0;
 
 		bool unkBool8 = unkHash10 != 0;
-		s.Serialize(unkBool8);
+		s.Serialize(unkBool8);
+
 		if (unkBool8)
 		{
 			bool unkBool9 = unkHash10 != 0;
-			s.Serialize(unkBool9);
+			s.Serialize(unkBool9);
+
 			if (unkBool9)
 			{
-				s.Serialize(32, unkHash10);			}
+				s.Serialize(32, unkHash10);
+			}
 		}
 
 		uint16_t unk12 = 0;
 
 		bool unkBool11 = unk12 != 0;
-		s.Serialize(unkBool11);
+		s.Serialize(unkBool11);
+
 		if (unkBool11)
 		{
 			/* Serialise_E0 - unknown, uint16_t confirmed
-			s.Serialize(unk12);
+			s.Serialize(unk12);
+
 			uint8_t unk13 = 0;
-			s.Serialize(unk13);			*/
+			s.Serialize(unk13);
+			*/
 		}
 
 		return true;
