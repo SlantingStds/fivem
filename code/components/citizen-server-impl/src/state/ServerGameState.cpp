@@ -352,6 +352,10 @@ static const char* PopTypeToString(fx::sync::ePopType type)
 	{
 		case fx::sync::POPTYPE_UNKNOWN:
 			return "POPTYPE_UNKNOWN";
+#ifdef STATE_RDR3
+		case fx::sync::POPTYPE_RANDOM_IDK:
+			return "POPTYPE_RANDOM_IDK";
+#endif
 		case fx::sync::POPTYPE_RANDOM_PERMANENT:
 			return "POPTYPE_RANDOM_PERMANENT";
 		case fx::sync::POPTYPE_RANDOM_PARKED:
@@ -3455,6 +3459,9 @@ bool ServerGameState::ValidateEntity(EntityLockdownMode entityLockdownMode, cons
 		if (entity->syncTree->GetPopulationType(&popType))
 		{
 			if (popType == sync::POPTYPE_RANDOM_AMBIENT || popType == sync::POPTYPE_RANDOM_PARKED || popType == sync::POPTYPE_RANDOM_PATROL ||
+#ifdef STATE_RDR3
+				popType == sync::POPTYPE_RANDOM_IDK || 
+#endif
 				popType == sync::POPTYPE_RANDOM_PERMANENT || popType == sync::POPTYPE_RANDOM_SCENARIO)
 			{
 				allowed = true;

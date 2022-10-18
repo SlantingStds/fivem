@@ -215,6 +215,7 @@ static void Init()
 		}
 		else
 		{
+#ifdef STATE_FIVE
 			auto en = entity->syncTree->GetEntityOrientation();
 			auto on = entity->syncTree->GetObjectOrientation();
 
@@ -239,9 +240,9 @@ static void Init()
 
 				if (highRes)
 				{
-					resultVec.x = rotX * 180.0 / pi;
-					resultVec.y = rotY * 180.0 / pi;
-					resultVec.z = rotZ * 180.0 / pi;
+					resultVec.x = rotX * 180.0f / pi;
+					resultVec.y = rotY * 180.0f / pi;
+					resultVec.z = rotZ * 180.0f / pi;
 				}
 				else
 				{
@@ -258,6 +259,16 @@ static void Init()
 					resultVec.z = glm::degrees(resultVec.z);
 				}
 			}
+#elif STATE_RDR3
+			auto en = entity->syncTree->GetEntityOrientation();
+
+			if (en)
+			{
+				resultVec.x = en->rotX * 180.0f / pi;
+				resultVec.y = en->rotY * 180.0f / pi;
+				resultVec.z = en->rotZ * 180.0f / pi;
+			}
+#endif
 		}
 	};
 
@@ -1748,6 +1759,13 @@ static void Init()
 
 		context.SetResult(player);
 	});
+
+	fx::ScriptEngine::RegisterNativeHandler("GET_ANIMAL_RARITY", makeEntityFunction([](fx::ScriptContext& context, const fx::sync::SyncEntityPtr& entity)
+	{
+		auto unkDataNode = entity->syncTree->GetDataNode_14359ec40();
+
+		return unkDataNode ? unkDataNode->rarityLevel : 0;
+	}));
 }
 
 static InitFunction initFunction([]()
