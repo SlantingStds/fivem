@@ -387,6 +387,7 @@ static const char* TypeToString(fx::sync::NetObjEntityType type)
 
 	switch (type)
 	{
+#ifdef STATE_FIVE
 		case sync::NetObjEntityType::Automobile:
 			return "Automobile";
 		case sync::NetObjEntityType::Bike:
@@ -415,6 +416,68 @@ static const char* TypeToString(fx::sync::NetObjEntityType type)
 			return "Trailer";
 		case sync::NetObjEntityType::Train:
 			return "Train";
+#elif defined(STATE_RDR3)
+		case sync::NetObjEntityType::Animal:
+			return "Animal";
+		case sync::NetObjEntityType::Automobile:
+			return "Automobile";
+		case sync::NetObjEntityType::Bike:
+			return "Bike";
+		case sync::NetObjEntityType::Boat:
+			return "Boat";
+		case sync::NetObjEntityType::Door:
+			return "Door";
+		case sync::NetObjEntityType::Heli:
+			return "Heli";
+		case sync::NetObjEntityType::Object:
+			return "Object";
+		case sync::NetObjEntityType::Ped:
+			return "Ped";
+		case sync::NetObjEntityType::Pickup:
+			return "Pickup";
+		case sync::NetObjEntityType::PickupPlacement:
+			return "PickupPlacement";
+		case sync::NetObjEntityType::Plane:
+			return "Plane";
+		case sync::NetObjEntityType::Submarine:
+			return "Submarine";
+		case sync::NetObjEntityType::Player:
+			return "Player";
+		case sync::NetObjEntityType::Trailer:
+			return "Trailer";
+		case sync::NetObjEntityType::Train:
+			return "Train";
+		case sync::NetObjEntityType::DraftVeh:
+			return "DraftVeh";
+		case sync::NetObjEntityType::StatsTracker:
+			return "StatsTracker";
+		case sync::NetObjEntityType::PropSet:
+			return "PropSet";
+		case sync::NetObjEntityType::AnimScene:
+			return "AnimScene";
+		case sync::NetObjEntityType::GroupScenario:
+			return "GroupScenario";
+		case sync::NetObjEntityType::Herd:
+			return "Herd";
+		case sync::NetObjEntityType::Horse:
+			return "Horse";
+		case sync::NetObjEntityType::WorldState:
+			return "WorldState";
+		case sync::NetObjEntityType::WorldProjectile:
+			return "WorldProjectile";
+		case sync::NetObjEntityType::Incident:
+			return "Incident";
+		case sync::NetObjEntityType::Guardzone:
+			return "Guardzone";
+		case sync::NetObjEntityType::PedGroup:
+			return "PedGroup";
+		case sync::NetObjEntityType::CombatDirector:
+			return "CombatDirector";
+		case sync::NetObjEntityType::PedSharedTargeting:
+			return "PedSharedTargeting";
+		case sync::NetObjEntityType::Persistent:
+			return "Persistent";
+#endif
 	}
 
 	return "UNKNOWN";
