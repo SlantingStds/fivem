@@ -66,6 +66,15 @@ inline bool shouldWrite(SyncUnparseState& state, const std::tuple<int, int, int>
 	return true;
 }
 
+inline float normalizeRot(const float value)
+{
+	const float pi = glm::pi<float>();
+	const float width = pi + pi;
+	const float offsetValue = value + pi;
+
+	return (offsetValue - (floor(offsetValue / width) * width)) + -pi;
+};
+
 // from https://stackoverflow.com/a/26902803
 template<class F, class... Ts, std::size_t... Is>
 void for_each_in_tuple(std::tuple<Ts...>& tuple, F func, std::index_sequence<Is...>)
@@ -474,26 +483,69 @@ struct ParseSerializer
 	}
 
 	template<typename T>
+	bool Serialize(T& data)
+	{
+		data = (T)state->buffer.ReadBit();
+		return true;
+	}
+
+	template<typename T>
 	bool Serialize(int size, T& data)
 	{
 		return state->buffer.Read(size, &data);
 	}
 
-	bool Serialize(bool& data)
+	template<typename T>
+	bool SerializeClamped(int size, int max, T& data) // only act on writing
 	{
-		data = state->buffer.ReadBit();
+		return state->buffer.Read(size, &data);
+	}
+
+	template<typename T>
+	bool SerializeSigned(int size, T& data)
+	{
+		data = state->buffer.ReadSigned<T>(size);
 		return true;
 	}
 
-	bool Serialize(int size, float div, float& data)
+	bool Serialize(int size, float range, float& data)
 	{
-		data = state->buffer.ReadFloat(size, div);
+		data = state->buffer.ReadFloat(size, range);
 		return true;
 	}
 
-	bool SerializeSigned(int size, float div, float& data)
+	bool SerializeSigned(int size, float range, float& data)
 	{
-		data = state->buffer.ReadSignedFloat(size, div);
+		data = state->buffer.ReadSignedFloat(size, range);
+		return true;
+	}
+
+	bool SerializeSpecialVector(int size, float mult, float& dataX, float& dataY, float& dataZ)
+	{
+		dataX = state->buffer.ReadSigned<int32_t>(size) * mult;
+		dataY = state->buffer.ReadSigned<int32_t>(size) * mult;
+		dataZ = state->buffer.ReadSigned<int32_t>(size) * mult;
+		return true;
+	}
+
+	bool SerializePosition(int size, float& dataX, float& dataY, float& dataZ)
+	{
+		dataX = state->buffer.ReadSignedFloat(size, 27648.0f);
+		dataY = state->buffer.ReadSignedFloat(size, 27648.0f);
+		dataZ = state->buffer.ReadFloat(size, 4416.0f) - 1700.0f;
+		return true;
+	}
+
+	bool SerializeRotation(float& dataX, float& dataY, float& dataZ)
+	{
+		const float mult = 1.0f / 64.0f;
+
+		int x = state->buffer.ReadSigned<int>(9);
+		int y = state->buffer.ReadSigned<int>(9);
+		int z = state->buffer.ReadSigned<int>(9);
+
+		dataX = x * mult, dataY = y * mult, dataZ = z * mult;
+
 		return true;
 	}
 
@@ -509,26 +561,73 @@ struct UnparseSerializer
 	}
 
 	template<typename T>
+	bool Serialize(T& data)
+	{
+		return state->buffer.WriteBit((uint8_t)data);
+	}
+
+	template<typename T>
 	bool Serialize(int size, T& data)
 	{
 		state->buffer.Write<T>(size, data);
 		return true;
 	}
 
-	bool Serialize(bool& data)
+	template<typename T>
+	bool SerializeClamped(int size, int max, T& data)
 	{
-		return state->buffer.WriteBit(data);
-	}
-
-	bool Serialize(int size, float div, float& data)
-	{
-		state->buffer.WriteFloat(size, div, data);
+		if (data > max) data = max;
+		state->buffer.Write<T>(size, data);
 		return true;
 	}
 
-	bool SerializeSigned(int size, float div, float& data)
+	template<typename T>
+	bool SerializeSigned(int size, T& data)
 	{
-		state->buffer.WriteSignedFloat(size, div, data);
+		state->buffer.WriteSigned<T>(size, data);
+		return true;
+	}
+
+	bool Serialize(int size, float range, float& data)
+	{
+		state->buffer.WriteFloat(size, range, data);
+		return true;
+	}
+
+	bool SerializeSigned(int size, float range, float& data)
+	{
+		state->buffer.WriteSignedFloat(size, range, data);
+		return true;
+	}
+
+	bool SerializeSpecialVector(int size, float mult, float& dataX, float& dataY, float& dataZ)
+	{
+		int32_t x = dataX / mult, y = dataY / mult, z = dataZ / mult;
+
+		state->buffer.WriteSigned<int32_t>(size, x);
+		state->buffer.WriteSigned<int32_t>(size, y);
+		state->buffer.WriteSigned<int32_t>(size, z);
+		
+		return true;
+	}
+
+	bool SerializePosition(int size, float& dataX, float& dataY, float& dataZ)
+	{
+		state->buffer.WriteSignedFloat(size, 27648.0f, dataX);
+		state->buffer.WriteSignedFloat(size, 27648.0f, dataY);
+		state->buffer.WriteFloat(size, 4416.0f, dataZ + 1700.0f);
+		return true;
+	}
+
+	bool SerializeRotation(float& dataX, float& dataY, float& dataZ)
+	{
+		const float mult = 1.0f / 64.0f;
+		int x = floor((normalizeRot(dataX) / mult) + 0.5f), y = floor((normalizeRot(dataY) / mult) + 0.5f), z = floor((normalizeRot(dataZ) / mult) + 0.5f);
+
+		state->buffer.WriteSigned<int>(9, x);
+		state->buffer.WriteSigned<int>(9, y);
+		state->buffer.WriteSigned<int>(9, z);
+
 		return true;
 	}
 
