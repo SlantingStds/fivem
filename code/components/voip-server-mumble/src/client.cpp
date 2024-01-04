@@ -110,7 +110,7 @@ int Client_getfds(struct pollfd *pollfds)
 	return 0;
 }
 
-bool Client_is_player_muted(int serverId)
+client_t* Client_get_from_player(int serverId)
 {
 	auto convertedServerId = fmt::sprintf("[%d]", serverId);
 	struct dlist *itr, *save;
@@ -120,24 +120,11 @@ bool Client_is_player_muted(int serverId)
 		c = list_get_entry(itr, client_t, node);
 		if (c->username && strstr(c->username, convertedServerId.c_str()))
 		{
-			return c->mute;
+			return c;
 		}
 	}
-}
 
-void Client_set_player_muted(int serverId, bool muted)
-{
-	auto convertedServerId = fmt::sprintf("[%d]", serverId);
-	struct dlist *itr, *save;
-	list_iterate_safe(itr, save, &clients)
-	{
-		client_t* c;
-		c = list_get_entry(itr, client_t, node);
-		if (c->username && strstr(c->username, convertedServerId.c_str())) {
-			c->mute = muted;
-			break;
-		}
-	}
+	return NULL;
 }
 
 void Client_janitor()
@@ -671,8 +658,8 @@ int Client_send_message(client_t *client, message_t *msg)
 	}
 	if (client->txsize != 0) {
 		/* Queue message */
-		if ((client->txQueueCount > 25 &&  msg->messageType == UDPTunnel) ||
-			client->txQueueCount > 150) {
+		if ((client->txQueueCount > 50 &&  msg->messageType == UDPTunnel) ||
+			client->txQueueCount > 300) {
 			Msg_free(msg);
 			return -1;
 		}
