@@ -309,6 +309,28 @@ struct CPedGameStateNodeData
 	}
 };
 
+struct CPedVehicleNodeData
+{
+	int curVehicle;
+	int curHorse;
+	int curSeat;
+
+	int lastVehicle;
+	int lastVehicleSeat;
+
+	int lastVehiclePedWasIn;
+
+	int lastHorse;
+	int lastHorseSeat;
+
+	int lastHorsePedWasOn;
+
+	inline CPedVehicleNodeData()
+		: lastVehicle(-1), lastVehicleSeat(-1), lastVehiclePedWasIn(-1), lastHorse(-1), lastHorseSeat(-1), lastHorsePedWasOn(-1)
+	{
+	}
+};
+
 /// <summary>
 /// Shared CPhysicalAttachNodeData/CPedAttachNodeData data
 /// </summary>
@@ -412,10 +434,10 @@ struct CVehicleGameStateNodeData
 	bool isEngineOn;
 	bool isEngineStarting;
 	bool handbrake;
-	int defaultHeadlights;
+	bool defaultHeadlights;
 	int headlightsColour;
 	bool sirenOn;
-	int lockStatus;
+	uint8_t lockStatus;
 	int doorsOpen;
 	int doorPositions[1 << 7];
 	bool isStationary;
@@ -435,7 +457,13 @@ struct CVehicleGameStateNodeData
 
 struct CEntityOrientationNodeData
 {
+#ifdef STATE_FIVE
 	compressed_quaternion<11> quat;
+#elif STATE_RDR3
+	float rotX;
+	float rotY;
+	float rotZ;
+#endif
 };
 
 struct CDummyObjectCreationNodeData
@@ -495,6 +523,10 @@ struct CPedOrientationNodeData
 {
 	float currentHeading;
 	float desiredHeading;
+#ifdef STATE_RDR3
+	uint8_t headingControl;
+	bool unkBool;
+#endif
 };
 
 struct CPedTaskTreeDataNodeData
@@ -673,9 +705,17 @@ struct CPedMovementGroupNodeData
 	bool isRagdolling;
 };
 
+struct DataNode_14359ec40Data
+{
+	uint32_t rarityLevel;
+};
+
 enum ePopType
 {
 	POPTYPE_UNKNOWN = 0,
+#ifdef STATE_RDR3
+	POPTYPE_RANDOM_IDK,
+#endif
 	POPTYPE_RANDOM_PERMANENT,
 	POPTYPE_RANDOM_PARKED,
 	POPTYPE_RANDOM_PATROL,
@@ -766,6 +806,8 @@ public:
 	virtual CBoatGameStateNodeData* GetBoatGameState() = 0;
 
 	virtual CPedMovementGroupNodeData* GetPedMovementGroup() = 0;
+
+	virtual DataNode_14359ec40Data* GetDataNode_14359ec40() = 0;
 
 	virtual void CalculatePosition() = 0;
 
